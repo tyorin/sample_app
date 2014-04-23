@@ -9,6 +9,7 @@ development:
   pool: 5
   timeout: 5000
   host: localhost
+  port: 5433
   username: railstutorial
   password: railstutorial
 
@@ -21,6 +22,7 @@ test:
   pool: 5
   timeout: 5000
   host: localhost
+  port: 5433
   username: railstutorial
   password: railstutorial
 
