@@ -29,6 +29,42 @@ describe "UserPages" do
       it "should not create a user" do
         expect { click_button submit }.not_to change(User, :count)
       end
+
+      describe "after submission" do
+        before { click_button submit }
+
+        it { should have_title('Sign up') }
+        it { should have_content('error') }
+      end
+
+      describe "validate blank" do
+        before { click_button submit }
+
+        it { should have_content("Name can't be blank") }
+        it { should have_content("Email can't be blank") }
+        it { should have_content("Password can't be blank") }
+        it { should have_content("Password confirmation can't be blank") }
+      end
+
+      describe "validate length" do
+        before do
+          fill_in "Name",     with: "a" * 51
+          fill_in "Password", with: "a" * 5
+          click_button submit
+        end
+
+        it { should have_content("Name is too long (maximum is 50 characters)") }
+        it { should have_content("Password is too short (minimum is 6 characters)") }
+      end
+
+      describe "validate format" do
+        before do
+          fill_in "Email", with: "foo@invalid"
+          click_button submit
+        end
+
+        it { should have_content("Email is invalid") }
+      end
     end
 
     describe "with valid information" do
@@ -41,6 +77,14 @@ describe "UserPages" do
 
       it "should create a user" do
         expect { click_button submit }.to change(User, :count).by(1)
+      end
+
+      describe "after saving the user" do
+        before { click_button submit }
+        let(:user) { User.find_by_email('user@example.com') }
+
+        it { should have_title(user.name) }
+        it { should have_selector('div.alert.alert-success', text: 'Welcome') }
       end
     end
   end
